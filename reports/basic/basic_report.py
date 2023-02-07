@@ -1,4 +1,3 @@
-import pandas as pd
 from reports.report import Report
 from db.data_base import DataBase as DB
 
@@ -25,8 +24,3 @@ class BasicReport(Report):
             bid = bid.query(f'month_bid in {list(self.months)}')
 
         return self.get_csv_report(bid)
-        # elif
-
-
-# my_report = HeatmapReport()
-# print(my_report.get_deal_report())

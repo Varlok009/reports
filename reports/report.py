@@ -7,7 +7,6 @@ import csv
 
 
 class Report:
-
     @staticmethod
     def get_str_report(plot: pyplot) -> str:
         buf = BytesIO()
@@ -15,6 +14,14 @@ class Report:
         plot = base64.b64encode(buf.getbuffer())
         plot = plot.decode('utf-8')
         return plot
+
+    @staticmethod
+    def get_png_report(plot: pyplot) -> str:
+        path = dirname(dirname(abspath(__file__)))
+        path = join(path, 'reports/heatmaps/')
+        file_path = f"{path}report.png"
+        plot.savefig(file_path)
+        return file_path
 
     @staticmethod
     def get_csv_report(data: pd.DataFrame) -> str:

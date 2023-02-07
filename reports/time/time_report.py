@@ -1,24 +1,20 @@
 import pandas as pd
-import numpy as np
 import seaborn as sns
 from matplotlib import pyplot as plt
 from reports.report import Report
 from db.data_base import DataBase as DB
-import calendar, locale
+from models.params import TimeParams
 
 
 class TimeReport(Report):
-    def __init__(self,
-                 partners: set | None, years: set | None, months: set | None,
-                 days: bool, aggr: str,
-                 stage: str
-                 ) -> None:
-        self.partners = partners
-        self.years = years
-        self.months = months
-        self.days = days
-        self.aggr = aggr
-        self.stage = stage
+    def __init__(self, params: TimeParams) -> None:
+        self.params = params.dict()
+        self.partners = self.params.get('partners')
+        self.years = self.params.get('years')
+        self.months = self.params.get('months')
+        self.days = self.params.get('days')
+        self.aggr = self.params.get('aggr')
+        self.stage = self.params.get('stage')
         self.data = self.filter_data()
 
     def filter_data(self) -> pd.DataFrame:
@@ -43,7 +39,7 @@ class TimeReport(Report):
                                                    columns=['year_statement'],
                                                    aggfunc=self.aggr),
                              annot=True, cbar=False, fmt='.1f', cmap="BuPu", linewidths=2, linecolor='gray')
-        report = self.get_str_report(report.figure)
+        report = self.get_png_report(report.figure)
         return report
 
 
