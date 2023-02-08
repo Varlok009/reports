@@ -6,6 +6,7 @@ from matplotlib import pyplot as plt
 from reports.report import Report
 from models.params import HeatmapParams
 from db.data_base import DataBase as DB
+from datetime import time
 
 
 class HeatmapReport(Report):
@@ -65,4 +66,24 @@ class HeatmapReport(Report):
                              yticklabels=self.y_axis_labels,
                              annot=True, cbar=False, fmt='.1f', cmap="BuPu", linewidths=2, linecolor='gray')
         report = self.get_png_report(report.figure)
+        return report
+
+    def get_heatmap_statement_time_report(self) -> str:
+        statement = self.data
+        df = pd.DataFrame(range(1, 25), columns=['stages'])
+        statement['statement_time'] = statement['date_create_statement'].dt.hour + 1
+        statement['statement_time_range'] = pd.cut(statement['statement_time'], df['stages'])
+
+        print(statement)
+        plt.title('Заявки')
+        plt.figure(figsize=(12, 6))
+        self.set_heatmap_settings()
+        report = sns.heatmap(statement.pivot_table(index='statement_time_range', values='price',
+                                                   columns='year_statement' if not self.days else 'day_of_weak_statement',
+                                                   aggfunc=self.aggr),
+                             # xticklabels=self.x_axis_labels if self.days else 'auto',
+                             # yticklabels=self.y_axis_labels,
+                             annot=True, cbar=False, fmt='.1f', cmap="BuPu", linewidths=2, linecolor='gray')
+        report = self.get_png_report(report.figure)
+
         return report

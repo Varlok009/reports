@@ -1,5 +1,5 @@
 from fastapi import Request, APIRouter
-from reports.time.time_report import TimeReport
+from reports.stages.stage_report import StageReport
 from fastapi.responses import FileResponse
 from config import templates
 from models.params import TimeParams
@@ -8,8 +8,8 @@ from models.params import TimeParams
 
 
 time_router = APIRouter(
-    prefix="/time",
-    tags=["time"],
+    prefix="/stages",
+    tags=["stages"],
     # dependencies=[Depends(get_token_header)],
     responses={404: {"description": "Not found"}},
 )
@@ -17,5 +17,5 @@ time_router = APIRouter(
 
 @time_router.post('/')
 async def get_time_report(request: Request, params: TimeParams):
-    report = TimeReport(params).get_time_report()
+    report = StageReport(params).get_time_report()
     return FileResponse(report, filename='report.png', media_type="application/octet-stream")

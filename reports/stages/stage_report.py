@@ -6,7 +6,7 @@ from db.data_base import DataBase as DB
 from models.params import TimeParams
 
 
-class TimeReport(Report):
+class StageReport(Report):
     def __init__(self, params: TimeParams) -> None:
         self.params = params.dict()
         self.partners = self.params.get('partners')
@@ -33,7 +33,6 @@ class TimeReport(Report):
     def get_time_report(self) -> str:
         statement = self.data
         plt.title('Время на финансирование')
-        print(statement)
         plt.figure(figsize=(10, 10))
         report = sns.heatmap(statement.pivot_table(index='month_statement', values=f"time_to_{self.stage}",
                                                    columns=['year_statement'],

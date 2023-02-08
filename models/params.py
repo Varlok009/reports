@@ -1,13 +1,33 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, validator, Field
 from datetime import datetime
 
 
 class BaseParams(BaseModel):
-    partners: set[str] | None = None
-    years: set[int] | None = None
-    months: set[int] | None = None
-    days: bool = False
-    aggr: str = 'count'
+    partners: set[str] | None = Field(
+        default=None,
+        title='Bank partner',
+        description='Partners in the report'
+    )
+    years: set[int] | None = Field(
+        default=None,
+        title='Years',
+        description='The report is generated for the period of years'
+    )
+    months: set[int] | None = Field(
+        default=None,
+        title='Months',
+        description='The report is generated for the period of months'
+    )
+    days: bool = Field(
+        default=False,
+        title='Report mode',
+        description='Day of the week report'
+    )
+    aggr: str = Field(
+        default='count',
+        title='Aggregation method',
+        description='Aggregation method in the report'
+    )
 
     @validator("partners")
     @classmethod
@@ -36,7 +56,7 @@ class BaseParams(BaseModel):
 
     @validator("months")
     @classmethod
-    def validate_months(cls, months):
+    def validate_months(cls, months: set[int]) -> set[int] | None:
         if not months:
             return months
         for month in months:
@@ -46,7 +66,7 @@ class BaseParams(BaseModel):
 
     @validator("aggr")
     @classmethod
-    def validate_aggr(cls, aggr):
+    def validate_aggr(cls, aggr: str) -> str:
         excepted_aggregate_func = {'count', 'sum', 'mean', 'median'}
         if aggr not in excepted_aggregate_func:
             raise ValueError(f"Unsupported aggregate function. Choose any from <{excepted_aggregate_func}>")
@@ -58,12 +78,20 @@ class HeatmapParams(BaseParams):
 
 
 class TimeParams(BaseParams):
-    aggr: str = 'mean'
-    stage: str | None = 'funded'
+    aggr: str = Field(
+        default='mean',
+        title='Aggregation method',
+        description='Aggregation method in the report'
+    )
+    stage: str | None = Field(
+        default='funded',
+        title='Statement stage',
+        description='Report on applications with a completed stage'
+    )
 
     @validator("stage")
     @classmethod
-    def validate_stage(cls, stage):
+    def validate_stage(cls, stage: str) -> str:
         excepted_stage = {'pre_approved', 'approved', 'funded'}
         if stage not in excepted_stage:
             raise ValueError(f"Unsupported stage. Choose any from <{excepted_stage}>")
