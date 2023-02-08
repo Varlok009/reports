@@ -41,7 +41,3 @@ class TimeReport(Report):
                              annot=True, cbar=False, fmt='.1f', cmap="BuPu", linewidths=2, linecolor='gray')
         report = self.get_png_report(report.figure)
         return report
-
-
-# my_report = HeatmapReport()
-# print(my_report.get_deal_report())

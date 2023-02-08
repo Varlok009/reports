@@ -15,14 +15,16 @@ heatmap_router = APIRouter(
 )
 
 
-@heatmap_router.post('/credit_report', tags=['heatmap'])
-async def get_heatmap_credit_report(request: Request, params: HeatmapParams):
+@heatmap_router.post('/credit_report', tags=['heatmap'],
+                     description="Get report about credit")
+async def get_heatmap_credit_report(request: Request, params: HeatmapParams) -> FileResponse:
     report = HeatmapReport(params).get_heatmap_credit_report()
     return FileResponse(report, filename='report.png', media_type="application/octet-stream")
     # return templates.TemplateResponse("report.html", {"request": request, "report": report})
 
 
-@heatmap_router.post('/statement_report', tags=['heatmap'])
-async def get_heatmap_statement_report(request: Request, params: HeatmapParams):
+@heatmap_router.post('/statement_report', tags=['heatmap'],
+                     description='Get report about statement')
+async def get_heatmap_statement_report(request: Request, params: HeatmapParams) -> FileResponse:
     report = HeatmapReport(params).get_heatmap_statement_report()
     return FileResponse(report, filename='report.png', media_type="application/octet-stream")

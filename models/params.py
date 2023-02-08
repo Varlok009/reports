@@ -1,5 +1,5 @@
 from pydantic import BaseModel, validator
-from fastapi.exceptions import HTTPException
+from datetime import datetime
 
 
 class BaseParams(BaseModel):
@@ -11,34 +11,46 @@ class BaseParams(BaseModel):
 
     @validator("partners")
     @classmethod
-    def validate_partners(cls, partners: set[str] | None):
+    def validate_partner(cls, partners: set[str] | None) -> set[str] | None:
         if not partners:
             return None
         validate_partners = set()
         excepted_partners = {'rosbank': 'Росбанк', 'setelem': 'Драйв Клик'}
         for partner in partners:
             if partner not in excepted_partners:
-                raise HTTPException(
-                    status_code=400,
-                    detail=f"Wrong partner - <{partner}>"
-                )
+                raise ValueError(f'Wrong name partner <{partner}>')
             validate_partners.add(excepted_partners.get(partner))
         return validate_partners
+
+    @validator("years")
+    @classmethod
+    def validate_years(cls, years: set[int] | None) -> set[int] | None:
+        if not years:
+            return None
+        for year in years:
+            if year < 2020:
+                raise ValueError(f"Year can't be less than 2020")
+            if year > datetime.now().year:
+                raise ValueError(f"Year can't be more than current year")
+        return years
 
     @validator("months")
     @classmethod
     def validate_months(cls, months):
         if not months:
             return months
-        validate_months = set()
         for month in months:
             if month not in set(range(1, 13)):
-                raise HTTPException(
-                    status_code=400,
-                    detail=f"Wrong month number - <{month}>"
-                )
-            validate_months.add(month)
-        return validate_months
+                raise ValueError(f"Wrong month number - <{month}>")
+        return months
+
+    @validator("aggr")
+    @classmethod
+    def validate_aggr(cls, aggr):
+        excepted_aggregate_func = {'count', 'sum', 'mean', 'median'}
+        if aggr not in excepted_aggregate_func:
+            raise ValueError(f"Unsupported aggregate function. Choose any from <{excepted_aggregate_func}>")
+        return aggr
 
 
 class HeatmapParams(BaseParams):
@@ -46,5 +58,13 @@ class HeatmapParams(BaseParams):
 
 
 class TimeParams(BaseParams):
-    stage: str | None = 'funded'
     aggr: str = 'mean'
+    stage: str | None = 'funded'
+
+    @validator("stage")
+    @classmethod
+    def validate_stage(cls, stage):
+        excepted_stage = {'pre_approved', 'approved', 'funded'}
+        if stage not in excepted_stage:
+            raise ValueError(f"Unsupported stage. Choose any from <{excepted_stage}>")
+        return stage
