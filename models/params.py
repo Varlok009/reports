@@ -8,6 +8,11 @@ class BaseParams(BaseModel):
         title='Bank partner',
         description='Partners in the report'
     )
+    dealers: set[str] | None = Field(
+        default=None,
+        title='Dealer partner',
+        description='Dealers in the report'
+    )
     years: set[int] | None = Field(
         default=None,
         title='Years',
@@ -77,7 +82,7 @@ class HeatmapParams(BaseParams):
     pass
 
 
-class TimeParams(BaseParams):
+class StageParams(BaseParams):
     aggr: str = Field(
         default='mean',
         title='Aggregation method',

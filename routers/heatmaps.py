@@ -15,7 +15,7 @@ heatmap_router = APIRouter(
 )
 
 
-@heatmap_router.post('/credit_report', tags=['heatmap'],
+@heatmap_router.post('/report/credit', tags=['heatmap'],
                      description="Get report about credit")
 async def get_heatmap_credit_report(request: Request, params: HeatmapParams) -> FileResponse:
     report = HeatmapReport(params).get_heatmap_credit_report()
@@ -23,15 +23,15 @@ async def get_heatmap_credit_report(request: Request, params: HeatmapParams) -> 
     # return templates.TemplateResponse("report.html", {"request": request, "report": report})
 
 
-@heatmap_router.post('/statement_report', tags=['heatmap'],
+@heatmap_router.post('/report/statement', tags=['heatmap'],
                      description='Get report about statement')
 async def get_heatmap_statement_report(request: Request, params: HeatmapParams) -> FileResponse:
     report = HeatmapReport(params).get_heatmap_statement_report()
     return FileResponse(report, filename='report.png', media_type="application/octet-stream")
 
 
-@heatmap_router.post('/statement_report/stages', tags=['heatmap'],
-                     description='Get report about statement')
-async def get_heatmap_statement_time_report(request: Request, params: HeatmapParams) -> FileResponse:
+@heatmap_router.post('/report/statement/time', tags=['heatmap'],
+                     description='Get report about statement with a time intervals')
+async def get_heatmap_statement_stages_report(request: Request, params: HeatmapParams) -> FileResponse:
     report = HeatmapReport(params).get_heatmap_statement_time_report()
     return FileResponse(report, filename='report.png', media_type="application/octet-stream")

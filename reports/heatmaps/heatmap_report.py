@@ -11,23 +11,8 @@ from datetime import time
 
 class HeatmapReport(Report):
     def __init__(self, params: HeatmapParams) -> None:
-        self.params = params.dict()
-        self.partners = self.params.get('partners')
-        self.years = self.params.get('years')
-        self.months = self.params.get('months')
-        self.days = self.params.get('days')
-        self.aggr = self.params.get('aggr')
+        super().__init__(params)
         self.data = self.filter_data()
-
-    def filter_data(self) -> pd.DataFrame:
-        data = DB.data
-        if self.partners:
-            data = data.query(f'partner in {list(self.partners)}')
-        if self.years:
-            data = data.query(f'year_statement in {list(self.years)}')
-        if self.months:
-            data = data.query(f'month_statement in {list(self.months)}')
-        return data
 
     def set_heatmap_settings(self) -> None:
         locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')

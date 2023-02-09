@@ -3,28 +3,17 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 from reports.report import Report
 from db.data_base import DataBase as DB
-from models.params import TimeParams
+from models.params import StageParams
 
 
 class StageReport(Report):
-    def __init__(self, params: TimeParams) -> None:
-        self.params = params.dict()
-        self.partners = self.params.get('partners')
-        self.years = self.params.get('years')
-        self.months = self.params.get('months')
-        self.days = self.params.get('days')
-        self.aggr = self.params.get('aggr')
+    def __init__(self, params: StageParams) -> None:
+        super().__init__(params)
         self.stage = self.params.get('stage')
         self.data = self.filter_data()
 
     def filter_data(self) -> pd.DataFrame:
-        data = DB.data
-        if self.partners:
-            data = data.query(f'partner in {list(self.partners)}')
-        if self.years:
-            data = data.query(f'year_statement in {list(self.years)}')
-        if self.months:
-            data = data.query(f'month_statement in {list(self.months)}')
+        data = super().filter_data()
         data = data.query(f'{self.stage}_status_at != "NaN"')
         data[f'time_to_{self.stage}'] = (data[f'{self.stage}_status_at'] - data['date_create_anketa']
                                          ).dt.components.minutes
