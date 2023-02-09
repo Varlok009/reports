@@ -14,7 +14,6 @@ class DataBase:
             # df.columns = ['partner', 'dealer', 'dealer_city', 'data_bid', 'data_credit']
             cls.__convert_date_time_fields(df)
             cls.data = df
-            print(df.head())
             print('Upload new data set')
 
     @staticmethod
